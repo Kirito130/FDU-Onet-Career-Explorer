@@ -1,0 +1,360 @@
+<!-- Hero Section -->
+<section class="hero-section text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-4">
+                    Discover Your Perfect Career Path
+                </h1>
+                <p class="lead mb-5" style="color: rgba(255, 255, 255, 0.95); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);">
+                    Find your ideal career based on your strengths and interests using the comprehensive O*NET occupational database and NACE competencies.
+                </p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="/competencies" class="btn btn-light btn-lg px-4">
+                        <i class="fas fa-brain me-2"></i>Find by Competencies
+                    </a>
+                    <a href="/majors" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-graduation-cap me-2"></i>Find by Major
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="h2 fw-bold mb-3">How It Works</h2>
+                <p class="lead text-muted">Choose your preferred method to discover your ideal career path</p>
+            </div>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-5 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="fas fa-brain fs-4"></i>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">Competency-Based Matching</h5>
+                        <p class="card-text text-muted mb-4">
+                            Select your top 3 NACE competencies to discover careers that match your strengths and skills.
+                        </p>
+                        <a href="/competencies" class="btn btn-primary">
+                            <i class="fas fa-arrow-right me-2"></i>Get Started
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="fas fa-graduation-cap fs-4"></i>
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">Major-Based Exploration</h5>
+                        <p class="card-text text-muted mb-4">
+                            Choose your course major to explore career opportunities in your field of study.
+                        </p>
+                        <a href="/majors" class="btn btn-success">
+                            <i class="fas fa-arrow-right me-2"></i>Explore Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Search Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="h2 fw-bold mb-3">Quick Search</h2>
+                <p class="lead text-muted">Get started immediately with our quick search tools</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-brain me-2"></i>Quick Competency Search
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="text-muted mb-4">Select your top 3 competencies to find matching careers:</p>
+                        <form id="quickCompetencyForm">
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold" style="color: #374151;">Select 3 Competencies:</label>
+                                <div class="row g-3">
+                                    <% if (competencies) { %>
+                                        <% competencies.forEach((competency, index) => { %>
+                                            <div class="col-md-6">
+                                                <div class="form-check p-3 border rounded">
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           name="competencies" value="<%= competency %>" 
+                                                           id="comp-<%= index %>">
+                                                    <label class="form-check-label fw-medium" for="comp-<%= index %>" style="color: #374151;">
+                                                        <i class="fas fa-<%= getCompetencyIcon(competency) %> me-2 text-primary"></i>
+                                                        <%= competency %>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100" id="searchCompetenciesBtn">
+                                <i class="fas fa-search me-2"></i>Search Careers
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-graduation-cap me-2"></i>Quick Major Search
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="text-muted mb-4">Select your course major to explore related careers:</p>
+                        <form id="quickMajorForm">
+                            <div class="mb-4">
+                                <label for="majorSelect" class="form-label fw-semibold" style="color: #374151;">Select Major:</label>
+                                <select class="form-select" id="majorSelect" name="major" required>
+                                    <option value="" style="color: #6b7280;">Choose a major...</option>
+                                    <% if (majors) { %>
+                                        <% majors.forEach(major => { %>
+                                            <option value="<%= major %>">
+                                                <%= major %>
+                                            </option>
+                                        <% }); %>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100" id="searchMajorBtn">
+                                <i class="fas fa-search me-2"></i>Search Careers
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Results Section (Hidden by default) -->
+<section id="resultsSection" class="py-5 bg-light" style="display: none;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="mb-4 fw-bold">
+                    <i class="fas fa-search me-2 text-primary"></i>Search Results
+                </h3>
+                <div id="resultsContainer">
+                    <!-- Results will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Quick search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Competency search form
+    const competencyForm = document.getElementById('quickCompetencyForm');
+    const competencyBtn = document.getElementById('searchCompetenciesBtn');
+    
+    competencyForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const selectedCompetencies = Array.from(document.querySelectorAll('input[name="competencies"]:checked'))
+            .map(cb => cb.value);
+        
+        if (selectedCompetencies.length !== 3) {
+            alert('Please select exactly 3 competencies');
+            return;
+        }
+        
+        searchByCompetencies(selectedCompetencies);
+    });
+    
+    // Major search form
+    const majorForm = document.getElementById('quickMajorForm');
+    
+    majorForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const selectedMajor = document.getElementById('majorSelect').value;
+        
+        if (!selectedMajor) {
+            alert('Please select a major');
+            return;
+        }
+        
+        searchByMajor(selectedMajor);
+    });
+    
+    // Search functions
+    async function searchByCompetencies(competencies) {
+        competencyBtn.disabled = true;
+        competencyBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Searching...';
+        
+        try {
+            const response = await fetch('/api/search/competencies', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ competencies })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                displayResults(data.jobs, `Careers matching: ${competencies.join(', ')}`);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        } catch (error) {
+            alert('Error searching careers: ' + error.message);
+        } finally {
+            competencyBtn.disabled = false;
+            competencyBtn.innerHTML = '<i class="fas fa-search me-2"></i>Search Careers';
+        }
+    }
+    
+    async function searchByMajor(major) {
+        const majorBtn = document.getElementById('searchMajorBtn');
+        majorBtn.disabled = true;
+        majorBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Searching...';
+        
+        try {
+            const response = await fetch('/api/search/majors', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ major })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                displayResults(data.jobs, `Careers related to ${major}`);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        } catch (error) {
+            alert('Error searching careers: ' + error.message);
+        } finally {
+            majorBtn.disabled = false;
+            majorBtn.innerHTML = '<i class="fas fa-search me-2"></i>Search Careers';
+        }
+    }
+    
+    function displayResults(jobs, title) {
+        const resultsSection = document.getElementById('resultsSection');
+        const resultsContainer = document.getElementById('resultsContainer');
+        
+        if (jobs.length === 0) {
+            resultsContainer.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    No matching careers found. Try different selections.
+                </div>
+            `;
+        } else {
+            let html = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Found ${jobs.length} matching careers
+                </div>
+                <div class="row">
+            `;
+            
+            jobs.forEach((job, index) => {
+                // Ensure we have a valid onetsoc_code
+                if (!job.onetsoc_code) {
+                    console.error('Missing onetsoc_code for job:', job);
+                    return;
+                }
+                
+                const encodedCode = encodeURIComponent(job.onetsoc_code);
+                html += `
+                    <div class="col-lg-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <span class="badge bg-primary me-2">${index + 1}</span>
+                                    ${job.title}
+                                </h6>
+                                <p class="card-text">
+                                    <small class="text-muted">${job.description.substring(0, 100)}...</small>
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-success">${job.match_score}% match</span>
+                                    <a href="/job/${encodedCode}" class="btn btn-sm btn-outline-primary" style="pointer-events: auto; cursor: pointer;">
+                                        <i class="fas fa-eye me-1"></i>View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            resultsContainer.innerHTML = html;
+        }
+        
+        resultsSection.style.display = 'block';
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+});
+</script>
+
+<% 
+function getCompetencyIcon(competency) {
+    const icons = {
+        'Communication': 'comments',
+        'Critical Thinking': 'brain',
+        'Leadership': 'crown',
+        'Teamwork': 'users',
+        'Technology': 'laptop-code',
+        'Professionalism': 'briefcase',
+        'Career & Self-Development': 'chart-line',
+        'Equity & Inclusion': 'globe'
+    };
+    return icons[competency] || 'star';
+}
+
+function getMajorIcon(major) {
+    const icons = {
+        'Arts': 'palette',
+        'Social Sciences': 'users',
+        'Environmental Studies': 'leaf',
+        'Hospitality & Tourism Management': 'hotel',
+        'Applied Technology': 'cogs',
+        'Business': 'chart-line',
+        'Communications': 'broadcast-tower',
+        'Digital Media Arts': 'video',
+        'Healthcare Administration': 'hospital',
+        'Homeland Security': 'shield-alt',
+        'Human Resource Management': 'user-tie',
+        'Liberal Studies': 'book-open',
+        'Public Administration': 'landmark',
+        'Technology': 'laptop-code',
+        'Sustainability': 'recycle'
+    };
+    return icons[major] || 'graduation-cap';
+}
+%>

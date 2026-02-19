@@ -1,0 +1,236 @@
+<!-- Page Header -->
+<section class="bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold mb-3 fade-in">
+                    <i class="fas fa-brain me-3 text-warning"></i>Find Careers by Competencies
+                </h1>
+                <p class="lead mb-0 fade-in" style="animation-delay: 0.2s; color: rgba(255, 255, 255, 0.95); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);">
+                    Select your top 3 NACE competencies to discover matching career opportunities
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Competency Selection -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card border-0 shadow-lg fade-in">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-check-circle me-2"></i>Select Your Top 3 Competencies
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="competencyForm">
+                            <div class="mb-4">
+                                <p class="text-muted mb-4">Choose exactly 3 competencies where you excel and feel most confident:</p>
+                                <div class="row g-3">
+                                    <% if (competencies) { %>
+                                        <% competencies.forEach((competency, index) => { %>
+                                            <div class="col-md-6">
+                                                <div class="form-check p-3 border rounded-3 hover-lift competency-card">
+                                                    <input class="form-check-input competency-checkbox" type="checkbox" 
+                                                           name="competencies" value="<%= competency %>" 
+                                                           id="comp-<%= index %>">
+                                                    <label class="form-check-label fw-semibold" for="comp-<%= index %>">
+                                                        <i class="fas fa-<%= getCompetencyIcon(competency) %> me-2 text-primary"></i>
+                                                        <%= competency %>
+                                                    </label>
+                                                    <div class="form-text mt-2">
+                                                        <%= getCompetencyDescription(competency) %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" id="searchBtn" disabled>
+                                    <i class="fas fa-search me-2"></i>Find Matching Careers
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Results Section -->
+<section id="resultsSection" class="py-5" style="display: none; background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="mb-4 fw-bold">
+                    <i class="fas fa-search me-2 text-primary"></i>Matching Career Opportunities
+                </h3>
+                <div id="resultsContainer">
+                    <!-- Results will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('competencyForm');
+    const searchBtn = document.getElementById('searchBtn');
+    const checkboxes = document.querySelectorAll('.competency-checkbox');
+    
+    // Handle checkbox changes
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const selectedCount = document.querySelectorAll('.competency-checkbox:checked').length;
+            
+            if (selectedCount > 3) {
+                this.checked = false;
+                alert('Please select exactly 3 competencies');
+                return;
+            }
+            
+            searchBtn.disabled = selectedCount !== 3;
+            
+            if (selectedCount === 3) {
+                searchBtn.innerHTML = '<i class="fas fa-search me-2"></i>Find Matching Careers';
+            } else {
+                searchBtn.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>Select ${3 - selectedCount} more competency${3 - selectedCount === 1 ? '' : 'ies'}`;
+            }
+        });
+    });
+    
+    // Handle form submission
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const selectedCompetencies = Array.from(document.querySelectorAll('.competency-checkbox:checked'))
+            .map(cb => cb.value);
+        
+        if (selectedCompetencies.length !== 3) {
+            alert('Please select exactly 3 competencies');
+            return;
+        }
+        
+        await searchCareers(selectedCompetencies);
+    });
+    
+    async function searchCareers(competencies) {
+        searchBtn.disabled = true;
+        searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Searching...';
+        
+        try {
+            const response = await fetch('/api/search/competencies', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ competencies })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                displayResults(data.jobs, `Careers matching: ${competencies.join(', ')}`);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        } catch (error) {
+            alert('Error searching careers: ' + error.message);
+        } finally {
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = '<i class="fas fa-search me-2"></i>Find Matching Careers';
+        }
+    }
+    
+    function displayResults(jobs, title) {
+        const resultsSection = document.getElementById('resultsSection');
+        const resultsContainer = document.getElementById('resultsContainer');
+        
+        if (jobs.length === 0) {
+            resultsContainer.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    No matching careers found. This should not happen with the improved algorithm.
+                </div>
+            `;
+        } else {
+            let html = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Found ${jobs.length} careers matching your competencies
+                </div>
+                <div class="row">
+            `;
+            
+            jobs.forEach((job, index) => {
+                html += `
+                    <div class="col-lg-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-0">
+                                        <span class="badge bg-primary me-2">${index + 1}</span>
+                                        ${job.title}
+                                    </h6>
+                                    <span class="badge bg-success">${job.match_score}% match</span>
+                                </div>
+                                <p class="card-text text-muted">
+                                    ${job.description.substring(0, 150)}...
+                                </p>
+                                <div class="d-grid">
+                                    <a href="/job/${job.onetsoc_code}" class="btn btn-outline-primary" style="text-decoration: none;">
+                                        <i class="fas fa-eye me-2"></i>View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            resultsContainer.innerHTML = html;
+        }
+        
+        resultsSection.style.display = 'block';
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+});
+</script>
+
+<% 
+function getCompetencyIcon(competency) {
+    const icons = {
+        'Communication': 'comments',
+        'Critical Thinking': 'brain',
+        'Leadership': 'crown',
+        'Teamwork': 'users',
+        'Technology': 'laptop-code',
+        'Professionalism': 'briefcase',
+        'Career & Self-Development': 'chart-line',
+        'Equity & Inclusion': 'globe'
+    };
+    return icons[competency] || 'star';
+}
+
+function getCompetencyDescription(competency) {
+    const descriptions = {
+        'Communication': 'Effectively exchange information, ideas, and thoughts with others',
+        'Critical Thinking': 'Analyze, evaluate, and synthesize information to make informed decisions',
+        'Leadership': 'Guide, motivate, and influence others to achieve common goals',
+        'Teamwork': 'Work collaboratively with others to achieve shared objectives',
+        'Technology': 'Use, understand, and adapt to technological tools and systems',
+        'Professionalism': 'Demonstrate appropriate workplace behavior, ethics, and work habits',
+        'Career & Self-Development': 'Manage personal career growth and continuous learning',
+        'Equity & Inclusion': 'Work effectively with diverse groups and promote inclusive environments'
+    };
+    return descriptions[competency] || 'Professional competency';
+}
+%>

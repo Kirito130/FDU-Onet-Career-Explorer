@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - <%= appName %></title>
+    <meta name="description" content="<%= appDescription %> - Find your ideal career based on NACE competencies and course majors">
+    
+    <!-- Preconnect to external domains for better performance -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="/">
+                <i class="fas fa-briefcase me-2 text-warning"></i>
+                <%= appName %>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium px-3 py-2 rounded-pill <%= (title === 'Home') ? 'active' : '' %>" href="/">
+                            <i class="fas fa-home me-2"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium px-3 py-2 rounded-pill <%= (title && title.includes('Competencies')) ? 'active' : '' %>" href="/competencies">
+                            <i class="fas fa-brain me-2"></i>By Competencies
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium px-3 py-2 rounded-pill <%= (title && title.includes('Major')) ? 'active' : '' %>" href="/majors">
+                            <i class="fas fa-graduation-cap me-2"></i>By Major
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium px-3 py-2 rounded-pill <%= (title && title.includes('About')) ? 'active' : '' %>" href="/about">
+                            <i class="fas fa-info-circle me-2"></i>About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium px-3 py-2 rounded-pill <%= (title && title.includes('Contact')) ? 'active' : '' %>" href="/contact">
+                            <i class="fas fa-envelope me-2"></i>Contact
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow-1">
+        <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5 mt-auto">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <h5 class="fw-bold mb-3 text-dark">
+                        <i class="fas fa-briefcase me-2 text-warning"></i><%= appName %>
+                    </h5>
+                    <p class="text-light-emphasis mb-3 fs-5">Discover your perfect career path using O*NET occupational <br> data and NACE competencies.</p>
+                    <div class="d-flex gap-3">
+                        <a href="https://www.linkedin.com/groups/4065875/" class="text-light-emphasis text-decoration-none fs-4" target="_blank" title="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://www.instagram.com/fdumetrocareer/" class="text-light-emphasis text-decoration-none fs-4" target="_blank" title="Career Development Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.facebook.com/FlorhamCareerDevelopment" class="text-light-emphasis text-decoration-none fs-4" target="_blank" title="Florham Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="https://www.facebook.com/FDUMetroCareerCenter/" class="text-light-emphasis text-decoration-none fs-4" target="_blank" title="Metropolitan Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="fw-semibold mb-3 text-dark fs-5">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/competencies" class="text-light-emphasis text-decoration-none fs-5">By Competencies</a></li>
+                        <li class="mb-2"><a href="/majors" class="text-light-emphasis text-decoration-none fs-5">By Major</a></li>
+                        <li class="mb-2"><a href="/about" class="text-light-emphasis text-decoration-none fs-5">About</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-light-emphasis text-decoration-none fs-5">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="fw-semibold mb-3 text-dark fs-5">Resources</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="https://www.onetcenter.org/" class="text-light-emphasis text-decoration-none fs-5" target="_blank">O*NET Online</a></li>
+                        <li class="mb-2"><a href="https://www.naceweb.org/" class="text-light-emphasis text-decoration-none fs-5" target="_blank">NACE</a></li>
+                        <li class="mb-2"><a href="https://fdu.edu/academics/centers-institutes/career-development/" class="text-light-emphasis text-decoration-none fs-5" target="_blank">FDU Career Center</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-light-emphasis fs-5">
+                        &copy; 2024 <%= appName %>. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 text-light-emphasis fs-5">
+                        Powered by O*NET and NACE data
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <!-- Custom JS -->
+    <script src="/js/app.js"></script>
+</body>
+</html>

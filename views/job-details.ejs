@@ -1,0 +1,605 @@
+<!-- Page Header -->
+<section class="bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold mb-3 fade-in">
+                    <i class="fas fa-briefcase me-3 text-warning"></i>Job Details
+                </h1>
+                <p class="lead mb-0 fade-in" style="animation-delay: 0.2s; color: rgba(255, 255, 255, 0.95); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);">
+                    Comprehensive information about this career opportunity
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Job Details Content -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <% if (job) { %>
+            <!-- Job Overview Card -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-header bg-primary text-white">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h2 class="mb-0 fw-bold">
+                                        <i class="fas fa-briefcase me-2"></i><%= job.title %>
+                                    </h2>
+                                    <p class="mb-0 mt-2 opacity-75">
+                                        <i class="fas fa-code me-1"></i>O*NET Code: <code><%= job.onetsoc_code %></code>
+                                    </p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <% if (job.job_zone) { %>
+                                        <span class="badge bg-warning text-dark fs-6">
+                                            Job Zone <%= job.job_zone.job_zone || 'N/A' %>
+                                        </span>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <h5 class="text-primary mb-3">
+                                        <i class="fas fa-info-circle me-2"></i>Job Description
+                                    </h5>
+                                    <p class="text-muted mb-4"><%= job.description %></p>
+                                    
+                                    <!-- Job Zone Information -->
+                                    <% if (job.job_zone) { %>
+                                        <div class="alert alert-info">
+                                            <h6 class="alert-heading">
+                                                <i class="fas fa-graduation-cap me-2"></i>Job Zone Information
+                                            </h6>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong>Experience:</strong> <%= job.job_zone.experience || 'Not specified' %><br>
+                                                    <strong>Education:</strong> <%= job.job_zone.education || 'Not specified' %>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <strong>Training:</strong> <%= job.job_zone.job_training || 'Not specified' %><br>
+                                                    <strong>SVP Range:</strong> <%= job.job_zone.svp_range || 'Not specified' %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <div class="col-lg-4">
+                                    <!-- Quick Info Card -->
+                                    <div class="card bg-light h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-primary">
+                                                <i class="fas fa-chart-line me-2"></i>Quick Information
+                                            </h6>
+                                            
+                                            <!-- Top NACE Competencies -->
+                                            <% if (job.top_competencies && job.top_competencies.length > 0) { %>
+                                                <div class="mb-3">
+                                                    <strong class="text-success">Top NACE Competencies:</strong>
+                                                    <% job.top_competencies.forEach((comp, index) => { %>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <small><%= comp.competency_name %></small>
+                                                            <span class="badge bg-success"><%= Math.round(comp.match_strength) %>%</span>
+                                                        </div>
+                                                    <% }); %>
+                                                </div>
+                                            <% } %>
+                                            
+                                            <!-- Related Majors -->
+                                            <% if (job.major_mappings && job.major_mappings.length > 0) { %>
+                                                <div class="mb-3">
+                                                    <strong class="text-info">Related Majors:</strong>
+                                                    <% job.major_mappings.slice(0, 3).forEach(major => { %>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <small><%= major.major_name %></small>
+                                                            <span class="badge bg-info"><%= Math.round(major.match_score) %>%</span>
+                                                        </div>
+                                                    <% }); %>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Information Tabs -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-header bg-white border-bottom">
+                            <ul class="nav nav-tabs card-header-tabs" id="jobDetailsTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks" type="button" role="tab">
+                                        <i class="fas fa-tasks me-2"></i>Tasks & Activities
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="skills-tab" data-bs-toggle="tab" data-bs-target="#skills" type="button" role="tab">
+                                        <i class="fas fa-cogs me-2"></i>Skills & Abilities
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="tools-tab" data-bs-toggle="tab" data-bs-target="#tools" type="button" role="tab">
+                                        <i class="fas fa-tools me-2"></i>Tools & Technology
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" type="button" role="tab">
+                                        <i class="fas fa-graduation-cap me-2"></i>Education & Training
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="work-tab" data-bs-toggle="tab" data-bs-target="#work" type="button" role="tab">
+                                        <i class="fas fa-briefcase me-2"></i>Work Environment
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="related-tab" data-bs-toggle="tab" data-bs-target="#related" type="button" role="tab">
+                                        <i class="fas fa-link me-2"></i>Related Careers
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="tab-content" id="jobDetailsTabsContent">
+                                <!-- Tasks & Activities Tab -->
+                                <div class="tab-pane fade show active" id="tasks" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-tasks me-2"></i>Key Tasks
+                                            </h5>
+                                            <% if (job.task_statements && job.task_statements.length > 0) { %>
+                                                <ul class="list-group list-group-flush">
+                                                    <% job.task_statements.slice(0, 10).forEach((task, index) => { %>
+                                                        <li class="list-group-item border-0 px-0">
+                                                            <div class="d-flex">
+                                                                <span class="badge bg-primary me-3 mt-1"><%= index + 1 %></span>
+                                                                <div>
+                                                                    <p class="mb-1"><%= task.task %></p>
+                                                                    <% if (task.incumbents_responding) { %>
+                                                                        <small class="text-muted">
+                                                                            <i class="fas fa-users me-1"></i>
+                                                                            <%= task.incumbents_responding %> incumbents reported
+                                                                        </small>
+                                                                    <% } %>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            <% } else { %>
+                                                <p class="text-muted">No specific tasks available</p>
+                                            <% } %>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-running me-2"></i>Work Activities
+                                            </h5>
+                                            <% if (job.work_activities && job.work_activities.length > 0) { %>
+                                                <ul class="list-group list-group-flush">
+                                                    <% job.work_activities.slice(0, 8).forEach(activity => { %>
+                                                        <li class="list-group-item border-0 px-0">
+                                                            <div class="d-flex justify-content-between align-items-start">
+                                                                <div class="flex-grow-1">
+                                                                    <strong><%= activity.content_model_reference?.element_name || 'Unknown Activity' %></strong>
+                                                                    <% if (activity.content_model_reference?.description) { %>
+                                                                        <p class="mb-1 text-muted small"><%= activity.content_model_reference.description %></p>
+                                                                    <% } %>
+                                                                </div>
+                                                                <span class="badge bg-info ms-2"><%= Math.round(activity.data_value) %></span>
+                                                            </div>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            <% } else { %>
+                                                <p class="text-muted">No work activities available</p>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Skills & Abilities Tab -->
+                                <div class="tab-pane fade" id="skills" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-cogs me-2"></i>Skills
+                                            </h5>
+                                            <% if (job.skills && job.skills.length > 0) { %>
+                                                <ul class="list-group list-group-flush">
+                                                    <% job.skills.slice(0, 10).forEach(skill => { %>
+                                                        <li class="list-group-item border-0 px-0">
+                                                            <div class="d-flex justify-content-between align-items-start">
+                                                                <div class="flex-grow-1">
+                                                                    <strong><%= skill.content_model_reference?.element_name || 'Unknown Skill' %></strong>
+                                                                    <% if (skill.content_model_reference?.description) { %>
+                                                                        <p class="mb-1 text-muted small"><%= skill.content_model_reference.description %></p>
+                                                                    <% } %>
+                                                                </div>
+                                                                <span class="badge bg-success ms-2"><%= Math.round(skill.data_value) %></span>
+                                                            </div>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            <% } else { %>
+                                                <p class="text-muted">No skills data available</p>
+                                            <% } %>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-brain me-2"></i>Abilities
+                                            </h5>
+                                            <% if (job.abilities && job.abilities.length > 0) { %>
+                                                <ul class="list-group list-group-flush">
+                                                    <% job.abilities.slice(0, 10).forEach(ability => { %>
+                                                        <li class="list-group-item border-0 px-0">
+                                                            <div class="d-flex justify-content-between align-items-start">
+                                                                <div class="flex-grow-1">
+                                                                    <strong><%= ability.content_model_reference?.element_name || 'Unknown Ability' %></strong>
+                                                                    <% if (ability.content_model_reference?.description) { %>
+                                                                        <p class="mb-1 text-muted small"><%= ability.content_model_reference.description %></p>
+                                                                    <% } %>
+                                                                </div>
+                                                                <span class="badge bg-warning text-dark ms-2"><%= Math.round(ability.data_value) %></span>
+                                                            </div>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            <% } else { %>
+                                                <p class="text-muted">No abilities data available</p>
+                                            <% } %>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-book me-2"></i>Knowledge Areas
+                                            </h5>
+                                            <% if (job.knowledge && job.knowledge.length > 0) { %>
+                                                <ul class="list-group list-group-flush">
+                                                    <% job.knowledge.slice(0, 10).forEach(knowledge => { %>
+                                                        <li class="list-group-item border-0 px-0">
+                                                            <div class="d-flex justify-content-between align-items-start">
+                                                                <div class="flex-grow-1">
+                                                                    <strong><%= knowledge.content_model_reference?.element_name || 'Unknown Knowledge' %></strong>
+                                                                    <% if (knowledge.content_model_reference?.description) { %>
+                                                                        <p class="mb-1 text-muted small"><%= knowledge.content_model_reference.description %></p>
+                                                                    <% } %>
+                                                                </div>
+                                                                <span class="badge bg-info ms-2"><%= Math.round(knowledge.data_value) %></span>
+                                                            </div>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            <% } else { %>
+                                                <p class="text-muted">No knowledge data available</p>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tools & Technology Tab -->
+                                <div class="tab-pane fade" id="tools" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-tools me-2"></i>Tools Used
+                                            </h5>
+                                            <% if (job.tools_used && job.tools_used.length > 0) { %>
+                                                <div class="row">
+                                                    <% job.tools_used.forEach(tool => { %>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="card h-100">
+                                                                <div class="card-body p-3">
+                                                                    <h6 class="card-title text-dark"><%= tool.example %></h6>
+                                                                    <% if (tool.unspsc_reference) { %>
+                                                                        <p class="card-text small text-muted mb-1">
+                                                                            <strong>Category:</strong> <%= tool.unspsc_reference.class_title || 'N/A' %>
+                                                                        </p>
+                                                                        <p class="card-text small text-muted">
+                                                                            <strong>Type:</strong> <%= tool.unspsc_reference.family_title || 'N/A' %>
+                                                                        </p>
+                                                                    <% } %>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <% }); %>
+                                                </div>
+                                            <% } else { %>
+                                                <p class="text-muted">No tools data available</p>
+                                            <% } %>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-laptop-code me-2"></i>Technology Skills
+                                            </h5>
+                                            <% if (job.technology_skills && job.technology_skills.length > 0) { %>
+                                                <div class="row">
+                                                    <% job.technology_skills.forEach(tech => { %>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="card h-100">
+                                                                <div class="card-body p-3">
+                                                                    <h6 class="card-title text-dark"><%= tech.example %></h6>
+                                                                    <div class="d-flex flex-wrap gap-1 mb-2">
+                                                                        <% if (tech.hot_technology === 'Y') { %>
+                                                                            <span class="badge bg-danger">Hot Technology</span>
+                                                                        <% } %>
+                                                                        <% if (tech.in_demand === 'Y') { %>
+                                                                            <span class="badge bg-success">In Demand</span>
+                                                                        <% } %>
+                                                                    </div>
+                                                                    <% if (tech.unspsc_reference) { %>
+                                                                        <p class="card-text small text-muted mb-1">
+                                                                            <strong>Category:</strong> <%= tech.unspsc_reference.class_title || 'N/A' %>
+                                                                        </p>
+                                                                    <% } %>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <% }); %>
+                                                </div>
+                                            <% } else { %>
+                                                <p class="text-muted">No technology skills data available</p>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Education & Training Tab -->
+                                <div class="tab-pane fade" id="education" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-lg-8">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-graduation-cap me-2"></i>Education & Training Requirements
+                                            </h5>
+                                            <% if (job.education_training && job.education_training.length > 0) { %>
+                                                <ul class="list-group list-group-flush">
+                                                    <% job.education_training.forEach(edu => { %>
+                                                        <li class="list-group-item border-0 px-0">
+                                                            <div class="d-flex justify-content-between align-items-start">
+                                                                <div class="flex-grow-1">
+                                                                    <strong><%= edu.content_model_reference?.element_name || 'Unknown Requirement' %></strong>
+                                                                    <% if (edu.content_model_reference?.description) { %>
+                                                                        <p class="mb-1 text-muted"><%= edu.content_model_reference.description %></p>
+                                                                    <% } %>
+                                                                    <% if (edu.ete_categories?.category_description) { %>
+                                                                        <p class="mb-1 text-info small">
+                                                                            <i class="fas fa-tag me-1"></i><%= edu.ete_categories.category_description %>
+                                                                        </p>
+                                                                    <% } %>
+                                                                </div>
+                                                                <span class="badge bg-primary ms-2"><%= Math.round(edu.data_value) %></span>
+                                                            </div>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            <% } else { %>
+                                                <p class="text-muted">No education and training data available</p>
+                                            <% } %>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <!-- Job Zone Education Info -->
+                                            <% if (job.job_zone) { %>
+                                                <div class="card bg-light">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title text-primary">
+                                                            <i class="fas fa-info-circle me-2"></i>Job Zone Details
+                                                        </h6>
+                                                        <p class="card-text">
+                                                            <strong>Education Level:</strong><br>
+                                                            <%= job.job_zone.education || 'Not specified' %>
+                                                        </p>
+                                                        <p class="card-text">
+                                                            <strong>Training Required:</strong><br>
+                                                            <%= job.job_zone.job_training || 'Not specified' %>
+                                                        </p>
+                                                        <p class="card-text">
+                                                            <strong>Experience Level:</strong><br>
+                                                            <%= job.job_zone.experience || 'Not specified' %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Work Environment Tab -->
+                                <div class="tab-pane fade" id="work" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-building me-2"></i>Work Context
+                                            </h5>
+                                            <% if (job.work_context && job.work_context.length > 0) { %>
+                                                <ul class="list-group list-group-flush">
+                                                    <% job.work_context.forEach(context => { %>
+                                                        <li class="list-group-item border-0 px-0">
+                                                            <div class="d-flex justify-content-between align-items-start">
+                                                                <div class="flex-grow-1">
+                                                                    <strong><%= context.content_model_reference?.element_name || 'Unknown Context' %></strong>
+                                                                    <% if (context.content_model_reference?.description) { %>
+                                                                        <p class="mb-1 text-muted small"><%= context.content_model_reference.description %></p>
+                                                                    <% } %>
+                                                                    <% if (context.work_context_categories?.category_description) { %>
+                                                                        <p class="mb-1 text-info small">
+                                                                            <i class="fas fa-tag me-1"></i><%= context.work_context_categories.category_description %>
+                                                                        </p>
+                                                                    <% } %>
+                                                                </div>
+                                                                <span class="badge bg-secondary ms-2"><%= Math.round(context.data_value) %></span>
+                                                            </div>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            <% } else { %>
+                                                <p class="text-muted">No work context data available</p>
+                                            <% } %>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-user me-2"></i>Work Styles
+                                            </h5>
+                                            <% if (job.work_styles && job.work_styles.length > 0) { %>
+                                                <ul class="list-group list-group-flush">
+                                                    <% job.work_styles.forEach(style => { %>
+                                                        <li class="list-group-item border-0 px-0">
+                                                            <div class="d-flex justify-content-between align-items-start">
+                                                                <div class="flex-grow-1">
+                                                                    <strong><%= style.content_model_reference?.element_name || 'Unknown Style' %></strong>
+                                                                    <% if (style.content_model_reference?.description) { %>
+                                                                        <p class="mb-1 text-muted small"><%= style.content_model_reference.description %></p>
+                                                                    <% } %>
+                                                                </div>
+                                                                <span class="badge bg-warning text-dark ms-2"><%= Math.round(style.data_value) %></span>
+                                                            </div>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            <% } else { %>
+                                                <p class="text-muted">No work styles data available</p>
+                                            <% } %>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-heart me-2"></i>Work Values
+                                            </h5>
+                                            <% if (job.work_values && job.work_values.length > 0) { %>
+                                                <ul class="list-group list-group-flush">
+                                                    <% job.work_values.forEach(value => { %>
+                                                        <li class="list-group-item border-0 px-0">
+                                                            <div class="d-flex justify-content-between align-items-start">
+                                                                <div class="flex-grow-1">
+                                                                    <strong><%= value.content_model_reference?.element_name || 'Unknown Value' %></strong>
+                                                                    <% if (value.content_model_reference?.description) { %>
+                                                                        <p class="mb-1 text-muted small"><%= value.content_model_reference.description %></p>
+                                                                    <% } %>
+                                                                </div>
+                                                                <span class="badge bg-info ms-2"><%= Math.round(value.data_value) %></span>
+                                                            </div>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            <% } else { %>
+                                                <p class="text-muted">No work values data available</p>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Related Careers Tab -->
+                                <div class="tab-pane fade" id="related" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-link me-2"></i>Related Occupations
+                                            </h5>
+                                            <% if (job.related_occupations && job.related_occupations.length > 0) { %>
+                                                <ul class="list-group list-group-flush">
+                                                    <% job.related_occupations.forEach(related => { %>
+                                                        <li class="list-group-item border-0 px-0">
+                                                            <div class="d-flex justify-content-between align-items-start">
+                                                                <div class="flex-grow-1">
+                                                                    <strong><%= related.occupation_data?.title || 'Unknown Occupation' %></strong>
+                                                                    <% if (related.occupation_data?.description) { %>
+                                                                        <p class="mb-1 text-muted small"><%= related.occupation_data.description %></p>
+                                                                    <% } %>
+                                                                    <small class="text-info">
+                                                                        <i class="fas fa-tag me-1"></i><%= related.relatedness_tier || 'Unknown Tier' %>
+                                                                    </small>
+                                                                </div>
+                                                                <span class="badge bg-primary ms-2">#<%= related.related_index || 'N/A' %></span>
+                                                            </div>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            <% } else { %>
+                                                <p class="text-muted">No related occupations available</p>
+                                            <% } %>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <h5 class="text-primary mb-3">
+                                                <i class="fas fa-tags me-2"></i>Alternative Titles
+                                            </h5>
+                                            <% if (job.alternate_titles && job.alternate_titles.length > 0) { %>
+                                                <ul class="list-group list-group-flush">
+                                                    <% job.alternate_titles.forEach(title => { %>
+                                                        <li class="list-group-item border-0 px-0">
+                                                            <div class="d-flex justify-content-between align-items-start">
+                                                                <div class="flex-grow-1">
+                                                                    <strong><%= title.alternate_title %></strong>
+                                                                    <% if (title.short_title) { %>
+                                                                        <p class="mb-1 text-muted small">Short: <%= title.short_title %></p>
+                                                                    <% } %>
+                                                                    <small class="text-info">
+                                                                        <i class="fas fa-source me-1"></i>Source: <%= title.sources || 'Unknown' %>
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    <% }); %>
+                                                </ul>
+                                            <% } else { %>
+                                                <p class="text-muted">No alternative titles available</p>
+                                            <% } %>
+                                            
+                                            <!-- Sample Reported Titles -->
+                                            <% if (job.sample_titles && job.sample_titles.length > 0) { %>
+                                                <h6 class="text-primary mt-4 mb-3">
+                                                    <i class="fas fa-list me-2"></i>Sample Reported Titles
+                                                </h6>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <% job.sample_titles.forEach(title => { %>
+                                                        <span class="badge bg-light text-dark border">
+                                                            <%= title.reported_job_title %>
+                                                        </span>
+                                                    <% }); %>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back to Search Button -->
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <a href="/" class="btn btn-primary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Career Search
+                    </a>
+                </div>
+            </div>
+
+        <% } else { %>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body text-center p-5">
+                            <div class="display-1 text-warning mb-4">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h2 class="mb-4">Job Not Found</h2>
+                            <p class="lead text-muted mb-4">
+                                The requested job details could not be found.
+                            </p>
+                            <a href="/" class="btn btn-primary">
+                                <i class="fas fa-home me-2"></i>Go Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</section>
