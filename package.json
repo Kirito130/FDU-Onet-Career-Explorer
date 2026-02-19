@@ -9,9 +9,7 @@
     "dev": "node --watch --no-deprecation server.js",
     "web": "node --no-deprecation server.js",
     "web:dev": "nodemon --no-deprecation server.js",
-    "build": "echo 'No build step required for static files'",
-    "deploy": "node deploy.js",
-    "test-deployment": "node test-deployment.js"
+    "build": "echo 'Build complete'"
   },
   "keywords": [
     "onet",
@@ -35,6 +33,7 @@
     "inquirer": "^9.2.12",
     "morgan": "^1.10.0",
     "ora": "^7.0.1",
+    "serverless-http": "^3.2.0",
     "table": "^6.8.1"
   },
   "devDependencies": {

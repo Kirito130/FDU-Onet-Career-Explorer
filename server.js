@@ -446,16 +446,18 @@ async function startServer() {
   }
 }
 
-// Handle graceful shutdown
-process.on('SIGINT', () => {
-  console.log('\n👋 Shutting down server gracefully...');
-  process.exit(0);
-});
+// Handle graceful shutdown (only when running as a standalone server)
+if (!process.env.NETLIFY) {
+  process.on('SIGINT', () => {
+    console.log('\n👋 Shutting down server gracefully...');
+    process.exit(0);
+  });
+  process.on('SIGTERM', () => {
+    console.log('\n👋 Shutting down server gracefully...');
+    process.exit(0);
+  });
+  startServer();
+}
 
-process.on('SIGTERM', () => {
-  console.log('\n👋 Shutting down server gracefully...');
-  process.exit(0);
-});
-
-// Start the server
-startServer();
+// Export app for Netlify serverless handler
+export { app };

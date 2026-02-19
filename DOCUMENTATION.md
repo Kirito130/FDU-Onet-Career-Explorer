@@ -58,16 +58,10 @@ FDU Careers Exploration is a production-ready command-line application that prov
 
 2. **Configure environment variables**
    ```bash
-   cp env.example .env
+   cp .env.example .env
    ```
    
-   Edit `.env` with your Supabase credentials:
-   ```env
-   SUPABASE_URL=your_supabase_url
-   SUPABASE_ANON_KEY=your_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   DATABASE_URL=your_database_url
-   ```
+   Edit `.env` with your Supabase credentials (use `SUPABASE_SECRET_KEY` or legacy `SUPABASE_SERVICE_ROLE_KEY` for server-side access).
 
 3. **Start the application**
    ```bash
@@ -189,6 +183,15 @@ The application uses 8 NACE (National Association of Colleges and Employers) com
 - Public Administration
 - Technology
 - Sustainability
+
+## Deployment (Netlify)
+
+The project is configured for Netlify. The entire app (Express server, EJS views, API routes, and static assets) runs as a single Netlify Function.
+
+1. Connect your repository to Netlify.
+2. Build command: `npm run build` (set in `netlify.toml`).
+3. Set environment variables in Netlify: `SUPABASE_URL`, `SUPABASE_SECRET_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`).
+4. Deploy. No separate back-end host is needed.
 
 ## Troubleshooting
 
