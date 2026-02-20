@@ -36,9 +36,12 @@ import { testConnection } from './src/database/supabase.js';
 // Load environment variables
 dotenv.config();
 
-// Get current directory for ES modules
-const __filename = fileURLToPath(import.meta.url);
+// Base directory for static files and views (works when bundled on Netlify where import.meta.url can be undefined)
+const __filename = typeof import.meta !== 'undefined' && import.meta.url
+  ? fileURLToPath(import.meta.url)
+  : path.join(process.cwd(), 'server.js');
 const __dirname = path.dirname(__filename);
+const baseDir = process.env.NETLIFY ? process.cwd() : __dirname;
 
 // Create Express app
 const app = express();
@@ -85,7 +88,7 @@ app.use((req, res, next) => {
 });
 
 // Serve static files - Render requires this specific configuration
-app.use(express.static(path.join(__dirname, 'public'), {
+app.use(express.static(path.join(baseDir, 'public'), {
   maxAge: '1d',
   etag: true,
   lastModified: true,
@@ -102,7 +105,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
 
 // Set view engine
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(baseDir, 'views'));
 
 // Use express-ejs-layouts
 app.use(expressEjsLayouts);
