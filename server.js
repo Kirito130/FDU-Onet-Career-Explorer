@@ -41,7 +41,10 @@ const __filename = typeof import.meta !== 'undefined' && import.meta.url
   ? fileURLToPath(import.meta.url)
   : path.join(process.cwd(), 'server.js');
 const __dirname = path.dirname(__filename);
-const baseDir = process.env.NETLIFY ? process.cwd() : __dirname;
+// On Netlify/Lambda, function runs from artifact root; views/ and public/ are included via netlify.toml included_files
+const baseDir = process.env.NETLIFY
+  ? (process.env.LAMBDA_TASK_ROOT || process.cwd())
+  : __dirname;
 
 // Create Express app
 const app = express();

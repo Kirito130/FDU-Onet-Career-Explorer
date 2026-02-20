@@ -59,6 +59,7 @@ The repo’s `netlify.toml` should set:
 - **Build command:** `npm run build`
 - **Publish directory:** `public`
 - **Functions directory:** `netlify/functions`
+- **Functions:** `external_node_modules` must include `express`, `@supabase/supabase-js`, `ejs`, and `express-ejs-layouts` so the view engine and Supabase load at runtime. `included_files` must include `views/**` and `public/**` so the function can find EJS templates and static assets in the Lambda environment.
 
 In Netlify:
 
@@ -155,6 +156,11 @@ If you use **“Read from netlify.toml”**, these come from the file. Do **not*
 
 - The app no longer crashes when env vars are missing; it runs in **demo mode** (pages load, API returns empty/demo data).
 - To connect the real database: **Site configuration** → **Environment variables** → add `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`). Scope: **Production** (and Deploy previews if needed). Then **Trigger deploy** → **Deploy site**.
+
+### “Cannot find module 'ejs'” or “Cannot find module 'express-ejs-layouts'”
+
+- **Cause:** The Express view engine and layout middleware are required at runtime by Express, but the Netlify function bundler (esbuild) doesn’t include them in the bundle.
+- **Fix:** In `netlify.toml`, under `[functions]`, add `ejs` and `express-ejs-layouts` to `external_node_modules` so they are loaded from `node_modules` at runtime. The repo’s `netlify.toml` already includes this. Ensure `views/` and `public/` are included in the function via `included_files = ["views/**", "public/**"]` so the app can find templates and static assets.
 
 ### Database / API errors in production
 

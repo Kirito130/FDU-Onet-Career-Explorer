@@ -21,5 +21,8 @@
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["express", "@supabase/supabase-js"]
+  # Keep these external so they load from node_modules at runtime (Express requires 'ejs' dynamically for view engine)
+  external_node_modules = ["express", "@supabase/supabase-js", "ejs", "express-ejs-layouts"]
+  # Include views and public in the function artifact so path.join(process.cwd(), 'views') and static files work in Lambda
+  included_files = ["views/**", "public/**"]
   directory = "netlify/functions"
