@@ -97,7 +97,9 @@ If you use **“Read from netlify.toml”**, these come from the file. Do **not*
 
 4. **Scope:** set variables for **All** or at least **Production** (and **Deploy previews** if you use branch deploys).
 
-5. Save. Redeploy the site so the new variables are applied.
+5. Save. **Redeploy the site** (Trigger deploy → Deploy site) so the new variables are applied. Environment variables are available at **runtime** to serverless functions; no build-time step is required.
+
+6. **Verify:** After deploy, open `https://your-site.netlify.app/api/health`. You should see `supabaseConfigured: true` and `database: "connected"`. If you see `supabaseConfigured: false` and a `hint` message, the app is in demo mode (no DB data)—double-check variable names and scope, then redeploy.
 
 ---
 
@@ -124,7 +126,7 @@ If you use **“Read from netlify.toml”**, these come from the file. Do **not*
    - Job details and API (e.g. `/api/health`) work.
 3. **API health:**  
    `https://your-site-name.netlify.app/api/health`  
-   Should return JSON with `status: "ok"` and database/mappings info.
+   Should return JSON with `status: "ok"`, `supabaseConfigured: true`, `database: "connected"`, and `competencyMappings` / `majorMappings` as appropriate. If `supabaseConfigured` is `false`, career search will show “No matching careers found” until env vars are set and you redeploy.
 
 ---
 
@@ -162,11 +164,21 @@ If you use **“Read from netlify.toml”**, these come from the file. Do **not*
 - **Cause:** The Express view engine and layout middleware are required at runtime by Express, but the Netlify function bundler (esbuild) doesn’t include them in the bundle.
 - **Fix:** In `netlify.toml`, under `[functions]`, add `ejs` and `express-ejs-layouts` to `external_node_modules` so they are loaded from `node_modules` at runtime. The repo’s `netlify.toml` already includes this. Ensure `views/` and `public/` are included in the function via `included_files = ["views/**", "public/**"]` so the app can find templates and static assets.
 
+### “No matching careers found” or empty results on By Major / By Competencies
+
+- **Cause:** The app is running in **demo mode** because Supabase credentials are not available to the serverless function (env vars not set or wrong scope).
+- **Fix:**
+  1. Open `https://your-site.netlify.app/api/health`. If you see `supabaseConfigured: false` and a `hint` field, add **SUPABASE_URL** and **SUPABASE_SECRET_KEY** (or **SUPABASE_SERVICE_ROLE_KEY**) in Netlify → Site configuration → Environment variables. Set scope to **Production** (and Deploy previews if needed).
+  2. **Trigger deploy** → **Deploy site** so the function runs with the new variables.
+  3. Check `/api/health` again; you should see `supabaseConfigured: true` and `database: "connected"`. Then try By Major / By Competencies again.
+- If `supabaseConfigured` is already `true` but you still get no results, the database may have no rows for that major or competency set; check your Supabase data.
+
 ### Database / API errors in production
 
 - Verify env vars in Netlify (Site configuration → Environment variables).
 - Ensure `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`) are set for the correct scope (Production / Deploy previews).
 - Redeploy after changing env vars.
+- Use `/api/health` to confirm `supabaseConfigured` and `database` status.
 
 ### 404 or “Page not found” on all routes
 

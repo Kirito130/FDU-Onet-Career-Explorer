@@ -31,7 +31,7 @@ import expressEjsLayouts from 'express-ejs-layouts';
 import { initializeApp } from './src/controllers/appController.js';
 import competencyService from './src/services/newCompetencyService.js';
 import majorService from './src/services/newMajorService.js';
-import { testConnection } from './src/database/supabase.js';
+import { testConnection, isSupabaseConfigured } from './src/database/supabase.js';
 
 // Load environment variables
 dotenv.config();
@@ -395,16 +395,21 @@ app.get('/api/job/:onetsocCode', async (req, res) => {
  */
 app.get('/api/health', async (req, res) => {
   try {
+    const supabaseConfigured = isSupabaseConfigured;
     const isConnected = await testConnection();
     const competencyMappingsExist = await competencyService.checkCompetencyMappingsExist();
     const majorMappingsExist = await majorService.checkMajorMappingsExist();
     
     res.json({
       status: 'ok',
+      supabaseConfigured: !!supabaseConfigured,
       database: isConnected ? 'connected' : 'disconnected',
       competencyMappings: competencyMappingsExist,
       majorMappings: majorMappingsExist,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      ...(!supabaseConfigured && {
+        hint: 'Set SUPABASE_URL and SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY) in Netlify → Site configuration → Environment variables, then redeploy.'
+      })
     });
   } catch (error) {
     res.status(500).json({

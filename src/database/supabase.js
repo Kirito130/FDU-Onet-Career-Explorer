@@ -8,13 +8,24 @@ import { config } from '../../config.js';
 
 /** Promise result when Supabase is not configured (env vars missing on Netlify, etc.) */
 const NOT_CONFIGURED = Promise.resolve({ data: null, error: { message: 'Supabase not configured' } });
+const NOT_CONFIGURED_COUNT = Promise.resolve({ data: null, error: { message: 'Supabase not configured' }, count: 0 });
 
 /** No-op chain: every terminal method returns NOT_CONFIGURED so await supabase.from().select()... works. */
 function mockFrom() {
   const end = () => NOT_CONFIGURED;
-  const chain = { eq: () => chain, order: () => chain, limit: end, single: end, or: () => chain };
+  const chain = {
+    eq: () => chain,
+    order: () => chain,
+    limit: end,
+    single: end,
+    or: () => chain,
+    gte: () => chain,
+    lte: () => chain,
+    in: () => chain,
+    filter: () => chain
+  };
   return {
-    select: () => chain,
+    select: (...args) => (args[1] && (args[1].count === 'exact' || args[1].head) ? NOT_CONFIGURED_COUNT : chain),
     insert: () => NOT_CONFIGURED,
     update: () => NOT_CONFIGURED,
     delete: () => NOT_CONFIGURED
@@ -26,6 +37,10 @@ function mockFrom() {
  * On Netlify: set SUPABASE_URL and SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY) in Site settings → Environment variables.
  */
 const hasCredentials = config.supabase.url && config.supabase.serviceRoleKey;
+if (!hasCredentials && typeof process !== 'undefined' && process.env.NETLIFY) {
+  console.warn('[Supabase] No SUPABASE_URL or SUPABASE_SECRET_KEY/SUPABASE_SERVICE_ROLE_KEY set. Running in demo mode (no DB data). Set env vars in Netlify → Site configuration → Environment variables, then redeploy.');
+}
+export const isSupabaseConfigured = hasCredentials;
 export const supabase = hasCredentials
   ? createClient(config.supabase.url, config.supabase.serviceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false }
