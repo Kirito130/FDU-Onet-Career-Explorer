@@ -12,12 +12,12 @@
   NETLIFY = "true"
 
 # Send all requests to the Express app (serverless function); :splat preserves path for Express
+# Do NOT add Role/conditions here - that restricts to JWT roles and causes 404 for normal visitors
 [[redirects]]
   force = true
   from = "/*"
-  status = 200
   to = "/.netlify/functions/server/:splat"
-  conditions = {Role = ["all"]}
+  status = 200
 
 [functions]
   node_bundler = "esbuild"

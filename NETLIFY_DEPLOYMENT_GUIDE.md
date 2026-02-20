@@ -159,8 +159,9 @@ The app needs Supabase (and optionally other) env vars.
 
 ### 404 or “Page not found” on all routes
 
-- Netlify rewrites to `/.netlify/functions/server[/path]`. The app strips that prefix in `server.js` (when `NETLIFY` is set) so Express sees `/`, `/competencies`, etc.
-- Use `to = "/.netlify/functions/server/:splat"` in `netlify.toml` so the path is passed. Ensure build env has `NETLIFY=true`.
+- **Do not use `conditions = {Role = ["all"]}` on the catch-all redirect.** Role restricts to JWT roles; other visitors get 404. Omit conditions so the rewrite applies to everyone.
+- Netlify rewrites to `/.netlify/functions/server[/path]`. The app strips that prefix in `server.js` (when `NETLIFY` is set).
+- Use `to = "/.netlify/functions/server/:splat"` in `netlify.toml`. Keep `public/_redirects` with the same rule. Ensure build env has `NETLIFY=true`.
 
 ---
 
