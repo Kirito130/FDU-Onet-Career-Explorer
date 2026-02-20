@@ -72,9 +72,9 @@ If you use **“Read from netlify.toml”**, these come from the file. Do **not*
 
 ---
 
-## 4. Set Environment Variables
+## 4. Set Environment Variables (required for database)
 
-The app needs Supabase (and optionally other) env vars.
+**If you see “This function has crashed” or “Missing Supabase credentials”** on your live site, the function is running but Supabase env vars are not set. `.env` is not deployed to Netlify; you must set variables in the Netlify UI.
 
 1. In Netlify: **Site configuration** → **Environment variables** → **Add a variable** (or **Import from .env**).
 2. Add at least:
@@ -150,6 +150,11 @@ The app needs Supabase (and optionally other) env vars.
   - `[[redirects]]` with `from = "/*"` and `to = "/.netlify/functions/server"`
   - `[functions]` with `directory = "netlify/functions"`
 - In **Site configuration** → **Build & deploy**, ensure Netlify is using the repo’s `netlify.toml` (or that the UI settings match it).
+
+### “This function has crashed” / “Missing Supabase credentials”
+
+- The app no longer crashes when env vars are missing; it runs in **demo mode** (pages load, API returns empty/demo data).
+- To connect the real database: **Site configuration** → **Environment variables** → add `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`). Scope: **Production** (and Deploy previews if needed). Then **Trigger deploy** → **Deploy site**.
 
 ### Database / API errors in production
 

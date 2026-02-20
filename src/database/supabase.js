@@ -6,29 +6,31 @@
 import { createClient } from '@supabase/supabase-js';
 import { config } from '../../config.js';
 
-// Ensure .env was loaded and current project credentials are set (config.js loads dotenv)
-// Use new secret key (SUPABASE_SECRET_KEY) or legacy service_role (SUPABASE_SERVICE_ROLE_KEY)
-if (!config.supabase.url || !config.supabase.serviceRoleKey) {
-  throw new Error(
-    'Missing Supabase credentials. Set SUPABASE_URL and either SUPABASE_SECRET_KEY (new) or SUPABASE_SERVICE_ROLE_KEY (legacy) in .env. ' +
-    'See https://supabase.com/docs/guides/api/api-keys'
-  );
+/** Promise result when Supabase is not configured (env vars missing on Netlify, etc.) */
+const NOT_CONFIGURED = Promise.resolve({ data: null, error: { message: 'Supabase not configured' } });
+
+/** No-op chain: every terminal method returns NOT_CONFIGURED so await supabase.from().select()... works. */
+function mockFrom() {
+  const end = () => NOT_CONFIGURED;
+  const chain = { eq: () => chain, order: () => chain, limit: end, single: end, or: () => chain };
+  return {
+    select: () => chain,
+    insert: () => NOT_CONFIGURED,
+    update: () => NOT_CONFIGURED,
+    delete: () => NOT_CONFIGURED
+  };
 }
 
 /**
- * Create Supabase client instance
- * Uses service role key for full database access
+ * Supabase client when credentials exist; otherwise a no-op so the app loads (demo mode).
+ * On Netlify: set SUPABASE_URL and SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY) in Site settings → Environment variables.
  */
-export const supabase = createClient(
-  config.supabase.url,
-  config.supabase.serviceRoleKey,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-);
+const hasCredentials = config.supabase.url && config.supabase.serviceRoleKey;
+export const supabase = hasCredentials
+  ? createClient(config.supabase.url, config.supabase.serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    })
+  : { from: mockFrom };
 
 /**
  * Test database connection
