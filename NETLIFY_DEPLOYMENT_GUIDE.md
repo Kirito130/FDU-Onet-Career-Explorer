@@ -159,8 +159,8 @@ The app needs Supabase (and optionally other) env vars.
 
 ### 404 or “Page not found” on all routes
 
-- Redirect must send all traffic to the function: `from = "/*"` and `to = "/.netlify/functions/server"`.
-- Check that `netlify/functions/server.js` exists and exports `handler` from `serverless-http(app)`.
+- Netlify rewrites to `/.netlify/functions/server[/path]`. The app strips that prefix in `server.js` (when `NETLIFY` is set) so Express sees `/`, `/competencies`, etc.
+- Use `to = "/.netlify/functions/server/:splat"` in `netlify.toml` so the path is passed. Ensure build env has `NETLIFY=true`.
 
 ---
 

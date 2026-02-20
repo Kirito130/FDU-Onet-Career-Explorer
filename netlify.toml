@@ -11,13 +11,12 @@
   NPM_FLAGS = "--legacy-peer-deps"
   NETLIFY = "true"
 
-# Send all requests to the Express app (serverless function)
-# Static assets (css, js) are served by Express from /public
+# Send all requests to the Express app (serverless function); :splat preserves path for Express
 [[redirects]]
   force = true
   from = "/*"
   status = 200
-  to = "/.netlify/functions/server"
+  to = "/.netlify/functions/server/:splat"
   conditions = {Role = ["all"]}
 
 [functions]

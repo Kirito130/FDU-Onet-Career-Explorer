@@ -59,6 +59,19 @@ app.use(helmet({
 }));
 
 app.use(cors());
+// On Netlify, requests are rewritten to /.netlify/functions/server[/path]; strip that prefix so Express sees /
+if (process.env.NETLIFY) {
+  app.use((req, res, next) => {
+    const prefix = '/.netlify/functions/server';
+    if (req.url.startsWith(prefix)) {
+      let rest = req.url.slice(prefix.length);
+      if (!rest || rest === '/') rest = '/';
+      else if (rest.startsWith('?')) rest = '/' + rest;
+      req.url = rest;
+    }
+    next();
+  });
+}
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
