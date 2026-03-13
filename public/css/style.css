@@ -223,6 +223,47 @@ p {
     padding: var(--space-lg);
 }
 
+/* Job details (and any) card with tabs: light header so inactive tab labels are readable */
+.card-header.bg-white {
+    background: #f1f5f9 !important;
+    color: #0f172a;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Tab bar container: force light background so dark text is readable */
+#jobDetailsTabs,
+.card-header-tabs {
+    background: #f1f5f9 !important;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Inactive tab buttons: dark text for maximum readability */
+#jobDetailsTabs .nav-link:not(.active),
+.card-header-tabs .nav-link:not(.active) {
+    color: #0f172a !important;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: var(--radius) var(--radius) 0 0;
+    background: transparent !important;
+}
+
+/* Inactive tabs hover: keep dark text, light tint background */
+#jobDetailsTabs .nav-link:not(.active):hover,
+.card-header-tabs .nav-link:not(.active):hover {
+    color: #020617 !important;
+    background: #e2e8f0 !important;
+    border-color: #cbd5e1;
+}
+
+/* Active tab: primary background, white text */
+#jobDetailsTabs .nav-link.active,
+.card-header-tabs .nav-link.active {
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+    border-color: var(--primary-dark);
+    font-weight: 600;
+}
+
 .card-body {
     padding: var(--space-xl);
 }
