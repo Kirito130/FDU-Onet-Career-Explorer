@@ -413,6 +413,40 @@ p {
     box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
 }
 
+.btn-outline-secondary {
+    border: 2px solid var(--gray-500);
+    color: var(--gray-700);
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+}
+
+.btn-outline-secondary:hover {
+    background: var(--gray-600);
+    color: white !important;
+    border-color: var(--gray-600);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3);
+}
+
+.btn-outline-warning {
+    border: 2px solid var(--warning-color);
+    color: var(--warning-color);
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+}
+
+.btn-outline-warning:hover {
+    background: var(--warning-color);
+    color: white !important;
+    border-color: var(--warning-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+}
+
 /* Form Controls */
 .form-control, .form-select {
     border-radius: var(--radius);
